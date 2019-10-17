@@ -7,7 +7,8 @@ grammar SeleniumScript;
  executionUnit: statement* EOF;
 
  statement
-	: operationSendkeys
+	: ifCondition
+	| operationSendkeys
 	| operationNavigateTo
 	| operationClick
 	| operationWait
@@ -15,6 +16,8 @@ grammar SeleniumScript;
 	| variableDeclaration
 	| variableAssignment
 	;
+
+ statementBlock: '{' statement* '}';
 
  operationLog: LOG parameterList EOL;
  operationSendkeys: SENDKEYS parameterList EOL;
@@ -25,6 +28,15 @@ grammar SeleniumScript;
  operationGetUrl: GETURL parameterList;
 
  parameterList: '(' (data COMMA?)* ')';
+
+ ifCondition
+	: IF '(' comparison ')' statementBlock (ELSE ifCondition)* (ELSE statementBlock)?
+	;
+
+ comparison
+	:  data COMPARISON data 
+	| (data COMPARISON comparison)*
+	;
 
  variableDeclaration: variableType variableAssignment;
  variableAssignment: IDENTIFIER ASSIGNMENT data EOL;
@@ -51,6 +63,9 @@ resolveStringLiteral: STRINGLITERAL;
  * Lexer Rules
  */
 
+ IF: 'if';
+ ELSE: 'else';
+
  STRING: 'string';
  INT: 'int';
  DOUBLE: 'double';
@@ -70,6 +85,7 @@ resolveStringLiteral: STRINGLITERAL;
 
  IDENTIFIER: [A-Za-z]+;
 
+ COMPARISON: '==';
  ASSIGNMENT: '=';
  EOL: ';';
  COMMA: ',';

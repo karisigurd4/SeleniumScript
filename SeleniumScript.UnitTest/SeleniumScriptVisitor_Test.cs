@@ -126,6 +126,202 @@
     }
 
     [TestMethod]
+    public void Can_Perform_Operation_Log()
+    {
+      var visitor = VisitScript("Log(\"Log output!\");");
+      Assert.AreEqual("Log", lastOperation.OperationType);
+      Assert.AreEqual("Log output!", lastOperation.Arguments[0]);
+    }
+
+    [TestMethod]
+    public void Can_Evaluate_True_If_Condition_Four_Variables()
+    {
+      var visitor = VisitScript("if (\"same\" == \"same\" == \"same\" == \"same\") { Wait(10); }");
+      Assert.AreEqual("Wait", lastOperation.OperationType);
+      Assert.AreEqual("10", lastOperation.Arguments[0]);
+    }
+
+    [TestMethod]
+    public void Can_Evaluate_True_If_Condition_Three_Variables()
+    {
+      var visitor = VisitScript("if (\"same\" == \"same\" == \"same\") { Wait(10); }");
+      Assert.AreEqual("Wait", lastOperation.OperationType);
+      Assert.AreEqual("10", lastOperation.Arguments[0]);
+    }
+
+    [TestMethod]
+    public void Can_Evaluate_False_If_Condition_Four_Variables()
+    {
+      lastOperation = new WebDriverOperationLog();
+      var visitor = VisitScript("if (\"1\" == \"2\" == \"3\" == \"4\") { Wait(10); }");
+      Assert.AreNotEqual("Wait", lastOperation.OperationType);
+      Assert.IsNull(lastOperation.Arguments);
+    }
+
+    [TestMethod]
+    public void Can_Evaluate_False_If_Condition_Three_Variables()
+    {
+      lastOperation = new WebDriverOperationLog();
+      var visitor = VisitScript("if (\"1\" == \"2\" == \"3\") { Wait(10); }");
+      Assert.AreNotEqual("Wait", lastOperation.OperationType);
+      Assert.IsNull(lastOperation.Arguments);
+    }
+
+    [TestMethod]
+    public void Can_Evaluate_True_If_Condition()
+    {
+      var visitor = VisitScript("if (\"same\" == \"same\") { Wait(10); }");
+      Assert.AreEqual("Wait", lastOperation.OperationType);
+      Assert.AreEqual("10", lastOperation.Arguments[0]);
+    }
+
+    [TestMethod]
+    public void Can_Evaluate_True_If_Else_Condition()
+    {
+      var visitor = VisitScript("if (\"same\" == \"same\") { Wait(10); } else { NavigateTo(\"Url\"); }");
+      Assert.AreEqual("Wait", lastOperation.OperationType);
+      Assert.AreEqual("10", lastOperation.Arguments[0]);
+    }
+
+    [TestMethod]
+    public void Can_Evaluate_False_If_Else_Condition()
+    {
+      var visitor = VisitScript("if (\"same\" == \"notsame\") { Wait(10); } else { NavigateTo(\"Url\"); }");
+      Assert.AreEqual("NavigateTo", lastOperation.OperationType);
+      Assert.AreEqual("Url", lastOperation.Arguments[0]);
+    }
+
+    [TestMethod]
+    public void Can_Evaluate_True_ElseIf_If_Else_Condition()
+    {
+      var visitor = VisitScript(
+@"
+if (""same"" == ""notsame"") 
+{ 
+  Wait(10); 
+} 
+else if (""same"" == ""same"") 
+{ 
+  string elementText = GetUrl(); 
+} 
+else 
+{ 
+  NavigateTo(""Url""); 
+}
+");
+      Assert.AreEqual("GetUrl", lastOperation.OperationType);
+      Assert.AreEqual("Test URL", visitor.DeclaredVariables["elementText"]);
+    }
+
+    [TestMethod]
+    public void Can_Evaluate_True_ElseIf_If_Condition()
+    {
+      var visitor = VisitScript(
+@"
+if (""same"" == ""notsame"") 
+{ 
+  Wait(10); 
+} 
+else if (""same"" == ""same"") 
+{ 
+  string elementText = GetUrl(); 
+} 
+");
+      Assert.AreEqual("GetUrl", lastOperation.OperationType);
+      Assert.AreEqual("Test URL", visitor.DeclaredVariables["elementText"]);
+    }
+
+    [TestMethod]
+    public void Can_Evaluate_True_If_ElseIf_Else_Condition()
+    {
+      var visitor = VisitScript(
+@"
+if (""same"" == ""same"") 
+{ 
+  Wait(10); 
+} 
+else if (""notsame"" == ""same"") 
+{ 
+  string elementText = GetUrl(); 
+} 
+else 
+{ 
+  NavigateTo(""Url""); 
+}
+");
+      Assert.AreEqual("Wait", lastOperation.OperationType);
+      Assert.AreEqual("10", lastOperation.Arguments[0]);
+    }
+
+    [TestMethod]
+    public void Can_Evaluate_True_If_ElseIfCondition()
+    {
+      var visitor = VisitScript(
+@"
+if (""same"" == ""same"") 
+{ 
+  Wait(10); 
+} 
+else if (""notsame"" == ""same"") 
+{ 
+  string elementText = GetUrl(); 
+} 
+");
+      Assert.AreEqual("Wait", lastOperation.OperationType);
+      Assert.AreEqual("10", lastOperation.Arguments[0]);
+    }
+
+    [TestMethod]
+    public void Can_Evaluate_True_Else_If_ElseIf_Condition()
+    {
+      var visitor = VisitScript(
+@"
+if (""same"" == ""notsame"") 
+{ 
+  Wait(10); 
+} 
+else if (""notsame"" == ""same"") 
+{ 
+  string elementText = GetUrl(); 
+} 
+else 
+{ 
+  NavigateTo(""Url""); 
+}
+");
+      Assert.AreEqual("NavigateTo", lastOperation.OperationType);
+      Assert.AreEqual("Url", lastOperation.Arguments[0]);
+    }
+
+    [TestMethod]
+    public void Can_Evaluate_False_If_ElseIf_Condition()
+    {
+      var visitor = VisitScript(
+@"
+if (""same"" == ""notsame"") 
+{ 
+  Wait(10); 
+} 
+else if (""notsame"" == ""same"") 
+{ 
+  string elementText = GetUrl(); 
+} 
+");
+      lastOperation = new WebDriverOperationLog();
+      Assert.AreNotEqual("Wait", lastOperation.OperationType);
+      Assert.IsNull(lastOperation.Arguments);
+    }
+
+    [TestMethod]
+    public void Can_Evaluate_False_If_Condition()
+    {
+      lastOperation = new WebDriverOperationLog();
+      var visitor = VisitScript("if (\"same\" == \"notsame\") { Wait(10); }");
+      Assert.AreNotEqual("Wait", lastOperation.OperationType);
+      Assert.IsNull(lastOperation.Arguments);
+    }
+
+    [TestMethod]
     public void Can_Perform_Operation_NavigateTo()
     {
       var visitor = VisitScript("NavigateTo(\"Url\");");
@@ -176,6 +372,14 @@
           )
         {
           throw new Exception(log.Message);
+        }
+        else if (log.LogLevel == Enums.LogLevel.Script)
+        {
+          lastOperation = new WebDriverOperationLog()
+          {
+            Arguments = new string[] { log.Message },
+            OperationType = "Log"
+          };
         }
       };
       seleniumScriptParser.AddErrorListener(new SeleniumScriptSyntaxErrorListener());
