@@ -132,6 +132,7 @@
   <ItemGroup>
     <Compile Include="Contracts\LogEntry.cs" />
     <Compile Include="Enums\LogLevel.cs" />
+    <Compile Include="Exceptions\SeleniumScriptSyntaxException.cs" />
     <Compile Include="Exceptions\SeleniumScriptVisitorException.cs" />
     <Compile Include="Exceptions\SeleniumScriptWebDriverException.cs" />
     <Compile Include="Globals.cs" />

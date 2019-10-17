@@ -81,7 +81,7 @@
     <None Include="packages.config" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\SeleniumScript.Runtime\SeleniumScript.csproj">
+    <ProjectReference Include="..\SeleniumScript\SeleniumScript.csproj">
       <Project>{ac44eb22-adc7-48df-8930-3052688d2438}</Project>
       <Name>SeleniumScript</Name>
     </ProjectReference>

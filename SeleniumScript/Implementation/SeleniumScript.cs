@@ -21,7 +21,7 @@
       this.seleniumScriptLogger = new SeleniumScriptLogger();
       this.seleniumScriptWebDriver = new SeleniumScriptWebDriver(webDriver, seleniumScriptLogger);
       this.seleniumScriptVisitor = new SeleniumScriptVisitor(seleniumScriptWebDriver, seleniumScriptLogger);
-      this.seleniumScriptSyntaxErrorListener = new SeleniumScriptSyntaxErrorListener(seleniumScriptLogger);
+      this.seleniumScriptSyntaxErrorListener = new SeleniumScriptSyntaxErrorListener();
 
       this.OnLogEntryWritten += (log) => { };
       this.seleniumScriptLogger.OnLogEntryWritten += (log) => OnLogEntryWritten(log); 
@@ -37,17 +37,25 @@
       {
         seleniumScriptVisitor.Visit(seleniumScriptParser.executionUnit());
       }
+      catch (SeleniumScriptSyntaxException seleniumScriptSyntaxException)
+      {
+        seleniumScriptLogger.Log(seleniumScriptSyntaxException.Message, Enums.LogLevel.SyntaxError);
+        throw seleniumScriptSyntaxException;
+      }
       catch (SeleniumScriptVisitorException seleniumScriptVisitorException)
       {
         seleniumScriptLogger.Log(seleniumScriptVisitorException.Message, Enums.LogLevel.VisitorError);
+        throw seleniumScriptVisitorException;
       }
       catch (SeleniumScriptWebDriverException seleniumScriptWebDriverException)
       {
         seleniumScriptLogger.Log(seleniumScriptWebDriverException.Message, Enums.LogLevel.SeleniumError);
+        throw seleniumScriptWebDriverException;
       }
       catch (Exception e)
       {
         seleniumScriptLogger.Log(e.Message, Enums.LogLevel.RuntimeError);
+        throw e;
       }
     }
 

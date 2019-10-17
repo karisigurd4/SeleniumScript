@@ -178,7 +178,7 @@
           throw new Exception(log.Message);
         }
       };
-      seleniumScriptParser.AddErrorListener(new SeleniumScriptSyntaxErrorListener(seleniumScriptLogger));
+      seleniumScriptParser.AddErrorListener(new SeleniumScriptSyntaxErrorListener());
       var visitor = new SeleniumScriptVisitor(webDriver.Object, seleniumScriptLogger);
       visitor.Visit(seleniumScriptParser.executionUnit());
       return visitor;

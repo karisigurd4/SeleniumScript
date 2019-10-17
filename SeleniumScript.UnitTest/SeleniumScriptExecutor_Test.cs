@@ -1,6 +1,4 @@
-﻿using OpenQA.Selenium.Chrome;
-
-namespace SeleniumScript.UnitTest
+﻿namespace SeleniumScript.UnitTest
 {
   using Microsoft.VisualStudio.TestTools.UnitTesting;
   using OpenQA.Selenium.Chrome;
@@ -34,7 +32,7 @@ namespace SeleniumScript.UnitTest
         Click(""//div[@class = 'sfw-dialog']//following::div[@class = 'c-glyph glyph-cancel']"", ""Close dialog button"");
         string elementText = GetElementText(""//h1[@id = 'DynamicHeading_productTitle']"", ""Product title"");
         NavigateTo(""https://www.google.com/"");
-        SendKeys(""//input[@name = 'q']"", elementText, ""Search bar"")
+        SendKeys(""//input[@name = 'q']"", elementText, ""Search bar"");
       ";
 
       using (var seleniumScript = new SeleniumScript(new ChromeDriver(new ChromeOptions() { LeaveBrowserRunning = false })))
@@ -50,17 +48,24 @@ namespace SeleniumScript.UnitTest
     [TestMethod]
     public void Logs_Error_On_Invalid_Script_Execution()
     {
-      string script = "Not a valid script!";
+      string script = "Wait(\"Hello world!\");";
 
       var logs = new List<LogEntry>();
-      using (var seleniumScript = new SeleniumScript(new ChromeDriver(new ChromeOptions() { LeaveBrowserRunning = false })))
+
+      try
       {
-        seleniumScript.OnLogEntryWritten += (log) => logs.Add(log);
-        seleniumScript.Run(script);
+        using (var seleniumScript = new SeleniumScript(new ChromeDriver(new ChromeOptions() { LeaveBrowserRunning = false })))
+        {
+          seleniumScript.OnLogEntryWritten += (log) => logs.Add(log);
+          seleniumScript.Run(script);
+        }
+      }
+      catch 
+      {
       }
 
       Assert.AreEqual(1, logs.Where(x => x.LogLevel == Enums.LogLevel.VisitorError).Count());
-      Assert.AreEqual("Identifier Not could not be resolved", logs.Where(x => x.LogLevel == Enums.LogLevel.VisitorError).First().Message);
+      Assert.AreEqual("Number could not be parsed", logs.Where(x => x.LogLevel == Enums.LogLevel.VisitorError).First().Message);
     }
 
     [TestMethod]
@@ -69,21 +74,26 @@ namespace SeleniumScript.UnitTest
       string script = "string a \"o\"";
 
       var logs = new List<LogEntry>();
-    using (var seleniumScript = new SeleniumScript(new ChromeDriver(new ChromeOptions() { LeaveBrowserRunning = false })))
-    {
-      seleniumScript.OnLogEntryWritten += (log) => logs.Add(log);
-      seleniumScript.Run(script);
-    }
+      try
+      {
+        using (var seleniumScript = new SeleniumScript(new ChromeDriver(new ChromeOptions() { LeaveBrowserRunning = false })))
+        {
+          seleniumScript.OnLogEntryWritten += (log) => logs.Add(log);
+          seleniumScript.Run(script);
+        }
+      }
+      catch
+      {
+      }
 
-      Assert.AreEqual(2, logs.Where(x => x.LogLevel == Enums.LogLevel.SyntaxError).Count());
+      Assert.AreEqual(1, logs.Where(x => x.LogLevel == Enums.LogLevel.SyntaxError).Count());
       Assert.AreEqual("Line: 1, Char: 9 on value \"o\": missing '=' at '\"o\"'", logs.Where(x => x.LogLevel == Enums.LogLevel.SyntaxError).ToArray()[0].Message);
-      Assert.AreEqual("Line: 1, Char: 12 on value <EOF>: missing ';' at '<EOF>'", logs.Where(x => x.LogLevel == Enums.LogLevel.SyntaxError).ToArray()[1].Message);
     }
 
     [TestMethod]
     public void Can_Run_Without_Event_Handler()
     {
-      string script = "string a \"o\"";
+      string script = "string a = \"o\";";
 
       var logs = new List<LogEntry>();
       using (var seleniumScript = new SeleniumScript(new ChromeDriver(new ChromeOptions() { LeaveBrowserRunning = false })))
