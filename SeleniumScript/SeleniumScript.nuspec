@@ -1,0 +1,22 @@
+﻿<?xml version="1.0"?>
+<package xmlns="http://schemas.microsoft.com/packaging/2013/05/nuspec.xsd">
+  <metadata>
+      <id>SeleniumScript</id>
+      <version>1.0.0</version>
+      <authors>Kári Sigurðsson</authors>
+      <owners>Kári Sigurðsson</owners>
+      <projectUrl>https://github.com/karisigurd4/SeleniumScript</projectUrl>
+      <license type="expression">MIT</license>
+      <requireLicenseAcceptance>false</requireLicenseAcceptance>
+      <releaseNotes>Initial release</releaseNotes>
+      <description>A scripting language abstraction built on top of Selenium WebDriver. Intended to make the process of writing frontend tests quicker and easier to maintain. Any flavour of IWebDriver can be plugged into the component.</description>
+      <copyright>Kári Sigurðsson</copyright>
+      <tags>selenium script webdriver</tags>
+      <dependencies>
+        <dependency id="Antlr4" version="4.6.6" targetFramework="net461" />
+        <dependency id="Antlr4.CodeGenerator" version="4.6.6" targetFramework="net461" />
+        <dependency id="Antlr4.Runtime" version="4.6.6" />
+        <dependency id="Selenium.WebDriver" version="3.141.0" />
+      </dependencies>
+  </metadata>
+</package>

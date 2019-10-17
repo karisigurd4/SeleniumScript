@@ -125,11 +125,6 @@
       seleniumLogger.Log($"Declaring variable {identifier}", LogLevel.VisitorDetails);
       DeclaredVariables.Add(identifier, string.Empty);
 
-      if(context.variableAssignment() != null)
-      {
-        VisitVariableAssignment(context.variableAssignment());
-      }
-
       return base.VisitVariableDeclaration(context);
     }
 

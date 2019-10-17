@@ -21,10 +21,9 @@
       string script =
       @"
         string fakeEmailAddress = ""fakeemail@fakeemail"";
-        Log(fakeEmailAddress);
         NavigateTo(""https://www.microsoft.com/sv-se/"");
-        Log(""Navigating to microsoft!"");
-        Click(""//button[@id = 'search']"");
+        Click(""//button[@id = 'search']"", ""search button"");
+        Log(""Finding the search bar and writing 'Windows 10' into it"");
         SendKeys(""//input[@id = 'cli_shellHeaderSearchInput']"", ""Windows 10"");
         Click(""//input[@id = 'cli_shellHeaderSearchInput']//following::a"", ""First search result"");
         SendKeys(""//div[@class = 'newsletter-email-main-section']//following::input"", fakeEmailAddress, ""Email address input field"");
@@ -39,7 +38,10 @@
       {
         seleniumScript.OnLogEntryWritten += (log) =>
         {
-          Debug.WriteLine(log.Message);
+          if(log.LogLevel == Enums.LogLevel.Script)
+          {
+            Debug.WriteLine($"{log.TimeStamp.ToString()} [{log.LogLevel.ToString()}] - {log.Message}");
+          }
         };
         seleniumScript.Run(script);
       }
