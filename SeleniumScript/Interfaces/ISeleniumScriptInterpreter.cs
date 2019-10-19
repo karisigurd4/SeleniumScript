@@ -2,8 +2,9 @@
 {
   using static SeleniumScript.Grammar.SeleniumScriptParser;
 
-  public interface ISeleniumScriptVisitor
+  public interface ISeleniumScriptInterpreter
   {
+    event CallBackEventHandler OnCallback;
     void Visit(ExecutionUnitContext context);
   }
 }

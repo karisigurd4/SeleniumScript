@@ -3,6 +3,7 @@
   using Microsoft.VisualStudio.TestTools.UnitTesting;
   using OpenQA.Selenium.Chrome;
   using SeleniumScript.Contracts;
+  using SeleniumScript.Exceptions;
   using SeleniumScript.Implementation;
   using System.Collections.Generic;
   using System.Diagnostics;
@@ -38,7 +39,7 @@
       {
         seleniumScript.OnLogEntryWritten += (log) =>
         {
-          if(log.LogLevel == Enums.LogLevel.Script)
+          if(log.LogLevel == Enums.SeleniumScriptLogLevel.Script)
           {
             Debug.WriteLine($"{log.TimeStamp.ToString()} [{log.LogLevel.ToString()}] - {log.Message}");
           }
@@ -66,8 +67,8 @@
       {
       }
 
-      Assert.AreEqual(1, logs.Where(x => x.LogLevel == Enums.LogLevel.VisitorError).Count());
-      Assert.AreEqual("Number could not be parsed", logs.Where(x => x.LogLevel == Enums.LogLevel.VisitorError).First().Message);
+      Assert.AreEqual(1, logs.Where(x => x.LogLevel == Enums.SeleniumScriptLogLevel.VisitorError).Count());
+      Assert.AreEqual("Number could not be parsed", logs.Where(x => x.LogLevel == Enums.SeleniumScriptLogLevel.VisitorError).First().Message);
     }
 
     [TestMethod]
@@ -88,8 +89,8 @@
       {
       }
 
-      Assert.AreEqual(1, logs.Where(x => x.LogLevel == Enums.LogLevel.SyntaxError).Count());
-      Assert.AreEqual("Line: 1, Char: 9 on value \"o\": missing '=' at '\"o\"'", logs.Where(x => x.LogLevel == Enums.LogLevel.SyntaxError).ToArray()[0].Message);
+      Assert.AreEqual(1, logs.Where(x => x.LogLevel == Enums.SeleniumScriptLogLevel.SyntaxError).Count());
+      Assert.AreEqual("Line: 1, Char: 9 on value \"o\": no viable alternative at input 'stringa\"o\"'", logs.Where(x => x.LogLevel == Enums.SeleniumScriptLogLevel.SyntaxError).ToArray()[0].Message);
     }
 
     [TestMethod]
@@ -101,6 +102,36 @@
       using (var seleniumScript = new SeleniumScript(new ChromeDriver(new ChromeOptions() { LeaveBrowserRunning = false })))
       {
         seleniumScript.Run(script);
+      }
+    }
+
+    [TestMethod]
+    public void Can_Handle_Callback_Event()
+    {
+      string script = "Callback(\"callback\");";
+      string callbackOutput = string.Empty;
+
+      var logs = new List<LogEntry>();
+      using (var seleniumScript = new SeleniumScript(new ChromeDriver(new ChromeOptions() { LeaveBrowserRunning = false })))
+      {
+        seleniumScript.RegisterCallbackHandler("callback", () => { callbackOutput = "Assigned"; });
+
+        seleniumScript.Run(script);
+      }
+
+      Assert.AreEqual("Assigned", callbackOutput);
+    }
+
+    [TestMethod]
+    public void Throws_Exception_If_Missing_Callback_Handler()
+    {
+      string script = "Callback(\"callback\");";
+      string callbackOutput = string.Empty;
+
+      var logs = new List<LogEntry>();
+      using (var seleniumScript = new SeleniumScript(new ChromeDriver(new ChromeOptions() { LeaveBrowserRunning = false })))
+      {
+        Assert.ThrowsException<SeleniumScriptException>(() => seleniumScript.Run(script), "Callback with name callback has not been registered");
       }
     }
   }

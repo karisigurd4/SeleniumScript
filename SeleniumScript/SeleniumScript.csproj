@@ -128,7 +128,22 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Contracts\LogEntry.cs" />
-    <Compile Include="Enums\LogLevel.cs" />
+    <Compile Include="Exceptions\SeleniumScriptException.cs" />
+    <Compile Include="Interpreter\DataModel\Function.cs" />
+    <Compile Include="Factories\StackFrameHandlerFactory.cs" />
+    <Compile Include="Interpreter\Visitors\ControlFlowVisitors.cs" />
+    <Compile Include="Interpreter\Visitors\ExpressionVisitors.cs" />
+    <Compile Include="Interpreter\Visitors\FunctionVisitors.cs" />
+    <Compile Include="Interpreter\Visitors\LiteralVisitors.cs" />
+    <Compile Include="Interpreter\Visitors\SeleniumOperationVisitors.cs" />
+    <Compile Include="Interpreter\CallStack\StackFrameHandler.cs" />
+    <Compile Include="Interpreter\DataModel\Symbol.cs" />
+    <Compile Include="Interpreter\Enums\StackFrameScope.cs" />
+    <Compile Include="Interpreter\Enums\SymbolType.cs" />
+    <Compile Include="Interpreter\CallStack\CallStack.cs" />
+    <Compile Include="Interpreter\Symbols\SymbolScope.cs" />
+    <Compile Include="Interpreter\DataModel\Variable.cs" />
+    <Compile Include="Enums\SeleniumScriptLogLevel.cs" />
     <Compile Include="Exceptions\SeleniumScriptSyntaxException.cs" />
     <Compile Include="Exceptions\SeleniumScriptVisitorException.cs" />
     <Compile Include="Exceptions\SeleniumScriptWebDriverException.cs" />
@@ -136,14 +151,22 @@
     <Compile Include="Implementation\SeleniumScriptSyntaxErrorListener.cs" />
     <Compile Include="Implementation\SeleniumScriptLogger.cs" />
     <Compile Include="Implementation\SeleniumScript.cs" />
-    <Compile Include="Implementation\SeleniumScriptVisitor.cs" />
+    <Compile Include="Interpreter\SeleniumScriptInterpreter.cs" />
     <Compile Include="Grammar\SeleniumScript.g4.lexer.cs" />
     <Compile Include="Grammar\SeleniumScript.g4.parser.cs" />
     <Compile Include="Implementation\SeleniumScriptWebDriver.cs" />
+    <Compile Include="Interpreter\Symbols\SymbolMap.cs" />
+    <Compile Include="Interfaces\ICallStack.cs" />
     <Compile Include="Interfaces\ISeleniumScriptLogger.cs" />
     <Compile Include="Interfaces\ISeleniumScript.cs" />
-    <Compile Include="Interfaces\ISeleniumScriptVisitor.cs" />
+    <Compile Include="Interfaces\ISeleniumScriptInterpreter.cs" />
     <Compile Include="Interfaces\ISeleniumScriptWebDriver.cs" />
+    <Compile Include="Interfaces\IStackFrameHandler.cs" />
+    <Compile Include="Interfaces\IStackFrameHandlerFactory.cs" />
+    <Compile Include="Interfaces\ISymbolMap.cs" />
+    <Compile Include="Interfaces\ISymbolScope.cs" />
+    <Compile Include="Interpreter\Visitors\VisitorUtils.cs" />
+    <Compile Include="Interpreter\Visitors\VariableVisitors.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>

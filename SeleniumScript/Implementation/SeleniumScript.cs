@@ -5,58 +5,73 @@
   using Exceptions;
   using Interfaces;
   using System;
-  using OpenQA.Selenium;
+  using global::SeleniumScript.Factories;
+  using global::SeleniumScript.Enums;
+  using System.Collections.Generic;
 
   public class SeleniumScript : ISeleniumScript, IDisposable
   {
     private readonly ISeleniumScriptLogger seleniumScriptLogger;
     private readonly ISeleniumScriptWebDriver seleniumScriptWebDriver;
-    private readonly ISeleniumScriptVisitor seleniumScriptVisitor;
-    private readonly SeleniumScriptSyntaxErrorListener seleniumScriptSyntaxErrorListener;
+    private readonly ISeleniumScriptInterpreter seleniumScriptVisitor;
+    private readonly Dictionary<string, Action> callbackHandlers = new Dictionary<string, Action>();
 
     public event LogEventHandler OnLogEntryWritten;
 
-    public SeleniumScript(IWebDriver webDriver)
+    private Dictionary<string, SeleniumScriptLogLevel> exceptionLogLevels = new Dictionary<string, SeleniumScriptLogLevel>()
+    {
+      { typeof(SeleniumScriptException).Name, SeleniumScriptLogLevel.SeleniumScriptError },
+      { typeof(SeleniumScriptSyntaxException).Name, SeleniumScriptLogLevel.SyntaxError },
+      { typeof(SeleniumScriptVisitorException).Name, SeleniumScriptLogLevel.VisitorError },
+      { typeof(SeleniumScriptWebDriverException).Name, SeleniumScriptLogLevel.WebDriver },
+      { typeof(Exception).Name, SeleniumScriptLogLevel.RuntimeError }
+    };
+
+    public SeleniumScript(OpenQA.Selenium.IWebDriver webDriver)
     {
       this.seleniumScriptLogger = new SeleniumScriptLogger();
+      seleniumScriptLogger.OnLogEntryWritten += (log) => OnLogEntryWritten(log); 
+
       this.seleniumScriptWebDriver = new SeleniumScriptWebDriver(webDriver, seleniumScriptLogger);
-      this.seleniumScriptVisitor = new SeleniumScriptVisitor(seleniumScriptWebDriver, seleniumScriptLogger);
-      this.seleniumScriptSyntaxErrorListener = new SeleniumScriptSyntaxErrorListener();
+
+      var callStack = new CallStack(new StackFrameHandlerFactory(), seleniumScriptLogger);
+      this.seleniumScriptVisitor = new SeleniumScriptInterpreter(seleniumScriptWebDriver, callStack, seleniumScriptLogger);
+      this.seleniumScriptVisitor.OnCallback += (callback) => HandleCallback(callback);
 
       this.OnLogEntryWritten += (log) => { };
-      this.seleniumScriptLogger.OnLogEntryWritten += (log) => OnLogEntryWritten(log); 
     }
 
     public void Run(string script)
     {
       var seleniumScriptLexer = new SeleniumScriptLexer(new AntlrInputStream(script));
       var seleniumScriptParser = new SeleniumScriptParser(new CommonTokenStream(seleniumScriptLexer));
-      seleniumScriptParser.AddErrorListener(seleniumScriptSyntaxErrorListener);
+      seleniumScriptParser.AddErrorListener(new SeleniumScriptSyntaxErrorListener());
       
       try
       {
         seleniumScriptVisitor.Visit(seleniumScriptParser.executionUnit());
       }
-      catch (SeleniumScriptSyntaxException seleniumScriptSyntaxException)
-      {
-        seleniumScriptLogger.Log(seleniumScriptSyntaxException.Message, Enums.LogLevel.SyntaxError);
-        throw seleniumScriptSyntaxException;
-      }
-      catch (SeleniumScriptVisitorException seleniumScriptVisitorException)
-      {
-        seleniumScriptLogger.Log(seleniumScriptVisitorException.Message, Enums.LogLevel.VisitorError);
-        throw seleniumScriptVisitorException;
-      }
-      catch (SeleniumScriptWebDriverException seleniumScriptWebDriverException)
-      {
-        seleniumScriptLogger.Log(seleniumScriptWebDriverException.Message, Enums.LogLevel.SeleniumError);
-        throw seleniumScriptWebDriverException;
-      }
       catch (Exception e)
       {
-        seleniumScriptLogger.Log(e.Message, Enums.LogLevel.RuntimeError);
+        seleniumScriptLogger.Log(e.Message, exceptionLogLevels[e.GetType().Name]);
+        Dispose();
         throw e;
       }
+    }
+
+    public void RegisterCallbackHandler(string callBackName, Action action)
+    {
+      callbackHandlers.Add(callBackName, action);
+    }
+
+    private void HandleCallback(string callback)
+    {
+      if (!callbackHandlers.ContainsKey(callback))
+      {
+        throw new SeleniumScriptException($"Callback with name {callback} has not been registered");
+      }
+
+      callbackHandlers[callback]();
     }
 
     public void Dispose()

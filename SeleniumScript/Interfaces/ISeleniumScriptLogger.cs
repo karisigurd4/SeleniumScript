@@ -5,6 +5,6 @@
   public interface ISeleniumScriptLogger
   {
     event LogEventHandler OnLogEntryWritten;
-    void Log(string message, LogLevel logSeverity = LogLevel.SeleniumInfo);
+    void Log(string message, SeleniumScriptLogLevel logSeverity = SeleniumScriptLogLevel.SeleniumInfo);
   }
 }

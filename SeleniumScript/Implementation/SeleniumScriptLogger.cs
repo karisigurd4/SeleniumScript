@@ -9,7 +9,7 @@
   {
     public event LogEventHandler OnLogEntryWritten;
 
-    public void Log(string message, LogLevel logSeverity = LogLevel.SeleniumInfo)
+    public void Log(string message, SeleniumScriptLogLevel logSeverity = SeleniumScriptLogLevel.SeleniumInfo)
     {
       var logEntry = new LogEntry()
       {

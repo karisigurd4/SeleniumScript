@@ -71,9 +71,11 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="CallStack_Test.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="SeleniumScriptExecutor_Test.cs" />
-    <Compile Include="SeleniumScriptVisitor_Test.cs" />
+    <Compile Include="SeleniumScriptInterpreter_Test.cs" />
+    <Compile Include="StackFrameHandler_Test.cs" />
     <Compile Include="WebDriverOperationLog.cs" />
   </ItemGroup>
   <ItemGroup>
@@ -85,6 +87,12 @@
       <Project>{ac44eb22-adc7-48df-8930-3052688d2438}</Project>
       <Name>SeleniumScript</Name>
     </ProjectReference>
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="..\packages\Chromium.ChromeDriver.2.37\content\chromedriver.exe">
+      <Link>chromedriver.exe</Link>
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
   </ItemGroup>
   <Import Project="$(VSToolsPath)\TeamTest\Microsoft.TestTools.targets" Condition="Exists('$(VSToolsPath)\TeamTest\Microsoft.TestTools.targets')" />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />

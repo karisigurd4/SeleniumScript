@@ -1,13 +1,14 @@
 ﻿namespace SeleniumScript.Enums
 {
-  public enum LogLevel
+  public enum SeleniumScriptLogLevel
   {
     Script,
-    VisitorDetails,
+    InterpreterDetails,
     SeleniumInfo,
     SyntaxError,
     VisitorError,
-    SeleniumError,
+    SeleniumScriptError,
+    WebDriver,
     RuntimeError
   }
 }

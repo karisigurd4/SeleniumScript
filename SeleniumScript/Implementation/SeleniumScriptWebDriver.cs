@@ -1,10 +1,9 @@
 ﻿namespace SeleniumScript.Implementation
 {
-  using OpenQA.Selenium;
-  using OpenQA.Selenium.Chrome;
   using global::SeleniumScript.Enums;
   using global::SeleniumScript.Exceptions;
   using global::SeleniumScript.Interfaces;
+  using OpenQA.Selenium;
   using System;
   using System.Text;
   using System.Threading;
@@ -12,48 +11,55 @@
   public class SeleniumScriptWebDriver : ISeleniumScriptWebDriver
   {
     private readonly IWebDriver webDriver;
-    private readonly ISeleniumScriptLogger seleniumLogger;
+    private readonly ISeleniumScriptLogger seleniumScriptLogger;
 
     public SeleniumScriptWebDriver(IWebDriver webDriver, ISeleniumScriptLogger seleniumLogger)
     {
       this.webDriver = webDriver;
-      this.seleniumLogger = seleniumLogger;
+      this.seleniumScriptLogger = seleniumLogger;
     }
 
     public void Close()
     {
-      seleniumLogger.Log($"Closing and quitting webdriver", Enums.LogLevel.SeleniumInfo);
-      webDriver.Close();
+      seleniumScriptLogger.Log($"Closing and quitting webdriver", SeleniumScriptLogLevel.SeleniumInfo);
+      try
+      {
+        webDriver.Close();
+      }
+      catch (WebDriverException)
+      {
+        seleniumScriptLogger.Log("Exception occurred on webDriver.Close()", SeleniumScriptLogLevel.WebDriver);
+      }
       webDriver.Quit();
     }
 
     public void Click(string xPath, string elementDescription)
     {
-      seleniumLogger.Log($"Clicking element {elementDescription}", Enums.LogLevel.SeleniumInfo);
+      seleniumScriptLogger.Log($"Clicking element {elementDescription}", SeleniumScriptLogLevel.SeleniumInfo);
       Retry(() => webDriver.FindElement(By.XPath(xPath)).Click());
     }
 
     public void NavigateTo(string url)
     {
-      seleniumLogger.Log($"Navigating driver to {url}");
+      seleniumScriptLogger.Log($"Navigating driver to {url}");
       webDriver.Url = url;
     }
 
     public void SendKeys(string xPath, string data, string elementDescription)
     {
-      seleniumLogger.Log($"Sending keys {data} to {elementDescription}", Enums.LogLevel.SeleniumInfo);
+      seleniumScriptLogger.Log($"Sending keys {data} to {elementDescription}", SeleniumScriptLogLevel.SeleniumInfo);
       Retry(() => webDriver.FindElement(By.XPath(xPath)).SendKeys(data));
     }
 
     public void WaitForSeconds(int numberOfSeconds)
     {
-      seleniumLogger.Log($"Waiting for {numberOfSeconds} seconds", Enums.LogLevel.SeleniumInfo);
+      seleniumScriptLogger.Log($"Waiting for {numberOfSeconds} seconds", SeleniumScriptLogLevel.SeleniumInfo);
       Thread.Sleep(numberOfSeconds * 1000);
     }
 
     public string GetElementText(string xPath, string elementDescription)
     {
-      seleniumLogger.Log($"Finding text on element {elementDescription}", Enums.LogLevel.SeleniumInfo);
+      seleniumScriptLogger.Log($"Finding text on element {elementDescription}", SeleniumScriptLogLevel.SeleniumInfo);
       var elementText = Retry(() => webDriver.FindElement(By.XPath(xPath)).Text);
       return Encoding.UTF8.GetString(Encoding.Default.GetBytes(elementText));
     }
@@ -61,7 +67,7 @@
     public string GetUrl()
     {
       var url = webDriver.Url;
-      seleniumLogger.Log($"Getting driver's URL: {url}", Enums.LogLevel.SeleniumInfo);
+      seleniumScriptLogger.Log($"Getting driver's URL: {url}", SeleniumScriptLogLevel.SeleniumInfo);
       return url;
     }
 
@@ -77,7 +83,7 @@
         }
         catch (Exception)
         {
-          seleniumLogger.Log("Operation not successful, retrying...", Enums.LogLevel.SeleniumInfo);
+          seleniumScriptLogger.Log("Operation not successful, retrying...", SeleniumScriptLogLevel.SeleniumInfo);
           Thread.Sleep(1000);
         }
       }
@@ -96,7 +102,7 @@
         }
         catch (Exception)
         {
-          seleniumLogger.Log("Operation not successful, retrying...", Enums.LogLevel.SeleniumInfo);
+          seleniumScriptLogger.Log("Operation not successful, retrying...", SeleniumScriptLogLevel.SeleniumInfo);
           Thread.Sleep(1000);
         }
       }
