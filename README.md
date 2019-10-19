@@ -27,7 +27,7 @@ SeleniumScript provides a number of built-in functions,
 SeleniumScript automatically creates log output on the SeleniumInfo log level for each of these operations. When the optional description parameters are used it serves to provide more comprehensive and usable diagnostic and monitoring information. 
 
 ### Variables
-Variables can be declared and assigned a constant string literal or assigned the value of a built-in method result
+Variables can be declared and assigned a literal or assigned the value of a built-in method result
 
 ```C#
 string variableName = "Hello world!";
