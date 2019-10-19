@@ -46,7 +46,7 @@ Wait(numberOfSeconds);
 ```C#
 MyFunc() 
 { 
-  Log(""This is a function""); 
+  Log("This is a function"); 
 } 
 ```
 
@@ -65,17 +65,17 @@ string GetTopResultOnGoogle(string searchString)
 ### Control flow
 **If - else if - else statements**
 ```C#
-if (""same"" == ""notsame"") 
+if ("same" == "notsame") 
 { 
   Wait(10); 
 } 
-else if (""same"" == ""same"") 
+else if ("same"" == "same") 
 { 
   string elementText = GetUrl(); 
 } 
 else 
 { 
-  NavigateTo(""Url""); 
+  NavigateTo("Url"); 
 }
 ```  
 
