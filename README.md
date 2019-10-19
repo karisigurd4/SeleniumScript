@@ -50,7 +50,7 @@ MyFunc()
 } 
 ```
 
-**Parameterized query with a return vlaue**
+**Parameterized function with a return vlaue**
 ```C#
 string GetTopResultOnGoogle(string searchString)
 {
