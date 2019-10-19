@@ -74,10 +74,10 @@ The SeleniumInfo log level will provide an overview of the steps taken in your s
 
     2019-10-17 21:35:20 [SeleniumInfo] - Navigating driver to https://www.microsoft.com/sv-se/
     2019-10-17 21:35:21 [SeleniumInfo] - Clicking element search button
-    2019-10-17 21:35:21 [SeleniumInfo] - Sending keys Windows 10 to 
+    2019-10-17 21:35:21 [SeleniumInfo] - Sending keys Windows 10 to search input
     2019-10-17 21:35:22 [SeleniumInfo] - Clicking element First search result
     2019-10-17 21:35:22 [SeleniumInfo] - Operation not successful, retrying...
-    2019-10-17 21:35:25 [SeleniumInfo] - Sending keys fakeemail@fakeemail to Email address input field
+    2019-10-17 21:35:25 [SeleniumInfo] - Sending keys fakeemail@fakeemail to email address input
     2019-10-17 21:35:26 [SeleniumInfo] - Waiting for 1 seconds
     2019-10-17 21:35:27 [SeleniumInfo] - Clicking element Close dialog button
     2019-10-17 21:35:27 [SeleniumInfo] - Finding text on element Product title
