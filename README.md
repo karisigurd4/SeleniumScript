@@ -31,6 +31,7 @@ The following variable types are currently supported
 * **int**
 * **string**
 
+Example usage
 ```C#
 string variableName = "Hello world!";
 variableName = "New value!";
