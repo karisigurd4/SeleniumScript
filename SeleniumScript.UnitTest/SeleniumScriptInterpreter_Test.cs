@@ -495,6 +495,24 @@ MyFunc();
     }
 
     [TestMethod]
+    public void Can_Call_Function_No_Return_Type()
+    {
+      var visitor = VisitScript(
+        @"
+MyFunc() 
+{ 
+  Log(""This is a function""); 
+  Wait(1); 
+} 
+
+MyFunc();
+");
+      Assert.IsNotNull(callStack.ResolveFunction("MyFunc"));
+      Assert.AreEqual("Wait", lastOperation.OperationType);
+      Assert.AreEqual("1", lastOperation.Arguments[0]);
+    }
+
+    [TestMethod]
     public void Can_Call_Function_With_Parameter()
     {
       scriptLogOutput.Clear();
@@ -768,7 +786,7 @@ Log(i);
       {
         if(
                 log.LogLevel == Enums.SeleniumScriptLogLevel.RuntimeError 
-            ||  log.LogLevel == Enums.SeleniumScriptLogLevel.WebDriver
+            ||  log.LogLevel == Enums.SeleniumScriptLogLevel.WebDriverError
             ||  log.LogLevel == Enums.SeleniumScriptLogLevel.SyntaxError
             ||  log.LogLevel == Enums.SeleniumScriptLogLevel.VisitorError
           )

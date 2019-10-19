@@ -23,7 +23,7 @@
       { typeof(SeleniumScriptException).Name, SeleniumScriptLogLevel.SeleniumScriptError },
       { typeof(SeleniumScriptSyntaxException).Name, SeleniumScriptLogLevel.SyntaxError },
       { typeof(SeleniumScriptVisitorException).Name, SeleniumScriptLogLevel.VisitorError },
-      { typeof(SeleniumScriptWebDriverException).Name, SeleniumScriptLogLevel.WebDriver },
+      { typeof(SeleniumScriptWebDriverException).Name, SeleniumScriptLogLevel.WebDriverError },
       { typeof(Exception).Name, SeleniumScriptLogLevel.RuntimeError }
     };
 

@@ -68,7 +68,7 @@
     public override object VisitFunctionDeclaration([NotNull] FunctionDeclarationContext context)
     {
       var identifier = context.IDENTIFIER().GetText();
-      var returnType = context.variableType().GetText();
+      var returnType = context.variableType() != null ? context.variableType().GetText() : null;
       seleniumLogger.Log($"Declaring function {identifier}", SeleniumScriptLogLevel.InterpreterDetails);
 
       var parameters = new Dictionary<string, string>();

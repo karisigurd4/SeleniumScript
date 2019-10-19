@@ -127,7 +127,7 @@ grammar SeleniumScript;
 	;
 
  functionDeclaration
-	: variableType IDENTIFIER functionParameters functionBody
+	: variableType? IDENTIFIER functionParameters functionBody
 	;
 
  functionParameters

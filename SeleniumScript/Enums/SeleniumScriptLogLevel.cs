@@ -8,7 +8,7 @@
     SyntaxError,
     VisitorError,
     SeleniumScriptError,
-    WebDriver,
+    WebDriverError,
     RuntimeError
   }
 }

@@ -28,7 +28,7 @@
       }
       catch (WebDriverException)
       {
-        seleniumScriptLogger.Log("Exception occurred on webDriver.Close()", SeleniumScriptLogLevel.WebDriver);
+        seleniumScriptLogger.Log("Exception occurred on webDriver.Close()", SeleniumScriptLogLevel.WebDriverError);
       }
       webDriver.Quit();
     }

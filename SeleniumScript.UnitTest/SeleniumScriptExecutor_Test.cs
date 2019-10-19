@@ -109,9 +109,10 @@
     public void Can_Handle_Callback_Event()
     {
       string script = "Callback(\"callback\");";
+      var logs = new List<LogEntry>();
+
       string callbackOutput = string.Empty;
 
-      var logs = new List<LogEntry>();
       using (var seleniumScript = new SeleniumScript(new ChromeDriver(new ChromeOptions() { LeaveBrowserRunning = false })))
       {
         seleniumScript.RegisterCallbackHandler("callback", () => { callbackOutput = "Assigned"; });
