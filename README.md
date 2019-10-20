@@ -4,7 +4,7 @@ A scripting language abstraction built on top of Selenium WebDriver. Intended to
 
 The language has similar syntax to C for what it supports. The code is parsed and run by an interpreter and does not require compilation. 
 
-The execution entry point for a script is the main function definition. 
+The execution entry point for a script is the run function definition. 
 
 Scripts can include other script files for separation of common helper and utility functions. 
 
