@@ -14,7 +14,7 @@ It is a dynamically typed language but strong type safety is enforced during run
 
 ### Scopes
 
-The language has global, local and method scope handling. Any execution of statements contained within curly braces creates an implicit local scope. The global scope is accessible by any part of the script at any time but method scopes are invisible to other method scopes. 
+The language has global, local and method scope handling. Any execution of statements contained within curly braces creates an implicit local scope. The global scope is accessible by any part of the script at any time but method scopes are invisible to other method scopes and any local scopes contained within them. 
 
 ## Motivation
 
