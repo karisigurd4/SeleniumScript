@@ -16,10 +16,6 @@ It is a dynamically typed language but strong type safety is enforced during run
 
 The language has global, local and method scope handling. Any execution of statements contained within curly braces creates an implicit local scope. The global scope is accessible by any part of the script at any time but method scopes are invisible to other method scopes and any local scopes contained within them. 
 
-## Motivation
-
-While selenium provides a great toolkit for writing front end interactions it is up to the user to implement/provide the encapsulating test framework. The language provides an interface abstraction to the underlying Selenium runtime and Performs automatically retry-operations. Where Selenium provides helper methods for querying the dom structure of a website this language currently will only accept xPath definitions as queries. Log output is provided implicitly with level separation for all components in the interpreter. Depending on which programming language is used to implement the tests they can end up being compiled to a static binary. It's a minor inconvenient hassle to open up the project, change the code, redeploy it into the running test suite etc. Furthermore the language and components provide means of hooking up external code execution to events in the script, referred in the language as *Callbacks* which can be useful in cases where you want to check or perform operations in the backend, if your test framework supports it. 
-
 ## Usage
 
 ```C#
