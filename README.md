@@ -39,7 +39,7 @@ The following variable types are currently supported
 * **int**
 * **string**
 
-Example usage
+Examples
 ```C#
 string variableName = "Hello world!";
 variableName = "New value!";
