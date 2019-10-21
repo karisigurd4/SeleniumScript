@@ -99,7 +99,7 @@ for (int i = 0; i < 10; i++)
 }
 ```   
 
-## Arithmetic ##
+**Arithmetic**
 
 Numerical arithmetic follows operator precedence
 
