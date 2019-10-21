@@ -154,7 +154,7 @@ SeleniumScript has the following levels of logging,
 
 ### Log routing
 
-By default SeleniumScript will assign a default event handler that outputs the SeleniumInfo logs to Debug.Out,but it is up to the client using SeleniumScript to hook up the **OnLogEntryWritten** event handler and route the logs as they please.
+It is up to the client using SeleniumScript to hook up the **OnLogEntryWritten** event handler and route the logs as they please.
 
 ```C#
 seleniumScript.OnLogEntryWritten += (log) =>
