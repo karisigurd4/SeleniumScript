@@ -112,7 +112,7 @@ String arithmetic
 
 ```C#
 string s;
-s = ""Hello"" + "" World!"";
+s = "Hello" + " World!";
 ```   
 
 
