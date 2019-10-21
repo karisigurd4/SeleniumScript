@@ -4,19 +4,9 @@ A scripting language abstraction built on top of Selenium WebDriver. Intended to
 
 The language has similar syntax to C for what it supports. The code is parsed and run by an interpreter and does not require compilation. 
 
-The execution entry point for a script is the run function definition. 
-
-Scripts can include other script files for separation of common helper and utility functions. 
-
-### Types
-
-It is a dynamically typed language but strong type safety is enforced during runtime, e.g., you cannot assign a string to an int. However the built in operations accept any type.
-
-### Scopes
-
-The language has global, local and method scope handling. Any execution of statements contained within curly braces creates an implicit local scope. The global scope is accessible by any part of the script at any time but method scopes are invisible to other method scopes and any local scopes contained within them. 
-
 ## Usage
+
+The interpreter component exposes a run method which takes in a script as a string. The component implements IDisposable which releases and quits the executing selenium runtime when invoked. 
 
 ```C#
 var script = "NavigateTo("https://www.microsoft.com/sv-se/");  Click("//button[@id = 'search']"); ...";
@@ -59,6 +49,9 @@ Wait(numberOfSeconds);
 ```  
 
 ### Functions
+
+Functions can be defined to execute a sequence of instructions with an optional return type and optional parameter list declarations. 
+
 **Simple function definition**
 ```C#
 MyFunc() 
@@ -72,8 +65,8 @@ MyFunc()
 string GetTopResultOnGoogle(string searchString)
 {
   NavigateTo("https://www.google.com/");
-  SendKeys("//input[@name = 'q']", elementText, ""Search bar"");
-  Click("//input[@name = 'q']//following::a", elementText, ""Search bar"");
+  SendKeys("//input[@name = 'q']", searchString, ""Search bar"");
+  Click("//input[@name = 'q']//following::a", searchString, ""Search bar"");
   
   return GetElementText("//div[@class = 'g']", "First search result");
 }
@@ -105,6 +98,31 @@ for (int i = 0; i < 10; i++)
 }
 ```  
 
+**Switch statements**
+```C#
+switch (switchOnVariable) 
+{
+    case "one": return 1;
+    case "two": Log("two"); NavigateTo("..."); break;
+    ... 
+} 
+```  
+
+
+### Writing scripts
+
+The execution entry point for a script is the run() function definition. 
+
+Scripts can include other script files for separation of common helper and utility functions. 
+
+### Type handling
+
+It is a dynamically typed language but strong type safety is enforced during runtime, e.g., you cannot assign a string to an int. However the built in operations accept any type.
+
+### Scope handling
+
+The language has global, local and method scope handling. Any execution of statements contained within curly braces creates an implicit local scope. The global scope is accessible by any part of the script at any time but method scopes are invisible to other method scopes and any local scopes contained within them. 
+
 ## Callbacks
 
 You can define any number of custom callback handlers that you can then reference in your scripts. This is useful in situations where you need to let the script trigger an event in your backend. Your registered callback handler can route operations accordingly.
@@ -135,7 +153,7 @@ SeleniumScript has the following levels of logging,
 
 ### Log routing
 
-By default SeleniumScript will not do anything at all with the logs it generates. It is up to the client using SeleniumScript to hook up the **OnLogEntryWritten** event handler and route the logs as they please.
+By default SeleniumScript will assign a default event handler that outputs the SeleniumInfo logs to Debug.Out,but it is up to the client using SeleniumScript to hook up the **OnLogEntryWritten** event handler and route the logs as they please.
 
 ```C#
 seleniumScript.OnLogEntryWritten += (log) =>
