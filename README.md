@@ -4,7 +4,7 @@ A scripting language that provides an interface abstraction to  Selenium WebDriv
 
 The language has similar syntax to C for what it supports. The code is parsed and run by an interpreter and does not require compilation. 
 
-## Usage
+## Usage (C# Component initialization)
 
 The interpreter component exposes a run method which takes in a script as a string. The component implements IDisposable which releases and quits the executing selenium runtime when invoked. 
 
