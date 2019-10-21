@@ -2,7 +2,7 @@
 
 A scripting language that provides an interface abstraction to  Selenium WebDriver. Intended to make the process of writing frontend tests quicker and easier to maintain. Any flavour of IWebDriver can be plugged into the component. The language has similar syntax to C for what it supports. The code is parsed and run by an interpreter and does not require compilation. 
 
-The language is defined with ANTLR and the interpreter is implemented in C# Framework 4.6.1.
+The language is defined with ANTLR and the interpreter is implemented in C#.
 
 ## Usage (C# Component initialization)
 
