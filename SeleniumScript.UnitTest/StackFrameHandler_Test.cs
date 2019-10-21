@@ -7,6 +7,7 @@
   using SeleniumScript.Implementation.DataModel;
   using SeleniumScript.Implementation.Enums;
   using SeleniumScript.Interfaces;
+  using SeleniumScript.Interpreter.Enums;
 
   [TestClass]
   public class StackFrameHandler_Test
@@ -25,7 +26,7 @@
     {
       var stackFrame = stackFrameHandlerFactory.Create(null, StackFrameScope.Global, seleniumScriptLogger.Object);
 
-      stackFrame.AddVariable("name", "value");
+      stackFrame.AddVariable("name", ReturnType.String, "value");
 
       var resolved = stackFrame.ResolveVariable("name");
 
@@ -37,7 +38,7 @@
     {
       var stackFrame = stackFrameHandlerFactory.Create(null, StackFrameScope.Global, seleniumScriptLogger.Object);
 
-      stackFrame.AddVariable("name");
+      stackFrame.AddVariable("name", ReturnType.String, "string");
       stackFrame.SetVariable("name", "anotherValue");
       var resolved = stackFrame.ResolveVariable("name");
 
@@ -49,7 +50,7 @@
     {
       var stackFrame = stackFrameHandlerFactory.Create(null, StackFrameScope.Global, seleniumScriptLogger.Object);
 
-      stackFrame.AddFunction("name", new Function("name", "string"));
+      stackFrame.AddFunction("name", new Function("name", ReturnType.String));
 
       var resolved = stackFrame.ResolveFunction("name");
 
@@ -63,7 +64,7 @@
       var methodScope = stackFrameHandlerFactory.Create(null, StackFrameScope.Method, seleniumScriptLogger.Object);
       var localScope = stackFrameHandlerFactory.Create(methodScope, StackFrameScope.Local, seleniumScriptLogger.Object);
 
-      methodScope.AddVariable("name", "value");
+      methodScope.AddVariable("name", ReturnType.String, "value");
 
       var resolved = localScope.ResolveVariable("name");
 
@@ -77,7 +78,7 @@
       var secondMethodScope = stackFrameHandlerFactory.Create(firstMethodScope, StackFrameScope.Method, seleniumScriptLogger.Object);
       var localScope = stackFrameHandlerFactory.Create(secondMethodScope, StackFrameScope.Local, seleniumScriptLogger.Object);
 
-      firstMethodScope.AddVariable("name", "value");
+      firstMethodScope.AddVariable("name", ReturnType.String, "value");
 
       var resolved = localScope.ResolveVariable("name");
 

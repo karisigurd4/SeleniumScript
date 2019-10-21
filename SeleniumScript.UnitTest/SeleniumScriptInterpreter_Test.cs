@@ -4,6 +4,7 @@
   using Microsoft.VisualStudio.TestTools.UnitTesting;
   using Moq;
   using SeleniumScript.Enums;
+  using SeleniumScript.Exceptions;
   using SeleniumScript.Factories;
   using SeleniumScript.Grammar;
   using SeleniumScript.Implementation;
@@ -73,16 +74,19 @@
     [TestMethod]
     public void Can_Declare_And_Assign_String_Variable()
     {
-      var visitor = VisitScript("string stringVariable = \"Windows 10\";");
-      Assert.AreEqual("Windows 10", callStack.ResolveVariable("stringVariable"));
+      var visitor = VisitScript(
+        "string stringVariable; " +
+        "stringVariable = \"Windows 10\";"
+      );
+      Assert.AreEqual("Windows 10", callStack.ResolveVariable("stringVariable").AsString);
     }
 
     [TestMethod]
     public void Can_Assign_String_Variable_To_Variable()
     {
       var visitor = VisitScript("string firstVariable = \"Windows 10\"; string secondVariable = firstVariable;");
-      Assert.AreEqual("Windows 10", callStack.ResolveVariable("firstVariable"));
-      Assert.AreEqual("Windows 10", callStack.ResolveVariable("secondVariable"));
+      Assert.AreEqual("Windows 10", callStack.ResolveVariable("firstVariable").AsString);
+      Assert.AreEqual("Windows 10", callStack.ResolveVariable("secondVariable").AsString);
     }
 
     [TestMethod]
@@ -448,7 +452,7 @@ else if (""notsame"" == ""same"")
       Assert.AreEqual("GetElementText", lastOperation.OperationType);
       Assert.AreEqual("xpath", lastOperation.Arguments[0]);
       Assert.AreEqual("description", lastOperation.Arguments[1]);
-      Assert.AreEqual("Test data", callStack.ResolveVariable("elementText"));
+      Assert.AreEqual("Test data", callStack.ResolveVariable("elementText").Value);
     }
 
     [TestMethod]
@@ -458,7 +462,7 @@ else if (""notsame"" == ""same"")
       Assert.AreEqual("GetElementText", lastOperation.OperationType);
       Assert.AreEqual("xpath", lastOperation.Arguments[0]);
       Assert.AreEqual("", lastOperation.Arguments[1]);
-      Assert.AreEqual("Test data", callStack.ResolveVariable("elementText"));
+      Assert.AreEqual("Test data", callStack.ResolveVariable("elementText").Value);
     }
 
     [TestMethod]
@@ -466,7 +470,7 @@ else if (""notsame"" == ""same"")
     {
       var visitor = VisitScript("string elementText = GetUrl();");
       Assert.AreEqual("GetUrl", lastOperation.OperationType);
-      Assert.AreEqual("Test URL", callStack.ResolveVariable("elementText"));
+      Assert.AreEqual("Test URL", callStack.ResolveVariable("elementText").Value);
     }
 
     [TestMethod]
@@ -502,14 +506,13 @@ MyFunc();
 MyFunc() 
 { 
   Log(""This is a function""); 
-  Wait(1); 
 } 
 
 MyFunc();
 ");
       Assert.IsNotNull(callStack.ResolveFunction("MyFunc"));
-      Assert.AreEqual("Wait", lastOperation.OperationType);
-      Assert.AreEqual("1", lastOperation.Arguments[0]);
+      Assert.AreEqual("Log", lastOperation.OperationType);
+      Assert.AreEqual("This is a function", lastOperation.Arguments[0]);
     }
 
     [TestMethod]
@@ -726,6 +729,48 @@ for (int i = 0; i < 10; i++)
     }
 
     [TestMethod]
+    public void Can_Declare_Iterator_Outside_For_Loop()
+    {
+      scriptLogOutput.Clear();
+
+      var visitor = VisitScript(
+@"
+int i = 0;
+for (; i < 10; i++)
+{
+  Log(i);
+}
+");
+      Assert.AreEqual(10, scriptLogOutput.Count);
+
+      for (int i = 0; i < 10; i++)
+      {
+        Assert.AreEqual(i.ToString(), scriptLogOutput[i]);
+      }
+    }
+
+    [TestMethod]
+    public void Can_Declare_Iterator_Outside_For_Loop_Assign_In_Declaration()
+    {
+      scriptLogOutput.Clear();
+
+      var visitor = VisitScript(
+@"
+int i;
+for (i = 0; i < 10; i++)
+{
+  Log(i);
+}
+");
+      Assert.AreEqual(10, scriptLogOutput.Count);
+
+      for (int i = 0; i < 10; i++)
+      {
+        Assert.AreEqual(i.ToString(), scriptLogOutput[i]);
+      }
+    }
+
+    [TestMethod]
     public void Can_Call_Function_From_For_loop()
     {
       scriptLogOutput.Clear();
@@ -775,6 +820,145 @@ Log(i);
 ");
       Assert.AreEqual("Log", lastOperation.OperationType);
       Assert.AreEqual("9", lastOperation.Arguments[0]);
+    }
+
+    [TestMethod]
+    public void Perform_Basic_Arithmetic()
+    {
+      scriptLogOutput.Clear();
+
+      var visitor = VisitScript(
+@"
+int i = 1 + 2;
+Log(i);
+i = 1 + 2 + 3;
+Log(i);
+i = 1 - 2;
+Log(i);
+i = 1 - 2 - 3;
+Log(i);
+i = 2 * 2;
+Log(i);
+i = 6 / 2;
+Log(i);
+");
+      Assert.AreEqual("3", scriptLogOutput[0]);
+      Assert.AreEqual("6", scriptLogOutput[1]);
+      Assert.AreEqual("-1", scriptLogOutput[2]);
+      Assert.AreEqual("-4", scriptLogOutput[3]);
+      Assert.AreEqual("4", scriptLogOutput[4]);
+      Assert.AreEqual("3", scriptLogOutput[5]);
+    }
+
+    [TestMethod]
+    public void Perform_Subtraction_Arithmetic()
+    {
+      scriptLogOutput.Clear();
+
+      var visitor = VisitScript(
+@"
+int i;
+i = 3 - 2 - 1;
+Log(i);
+i = 1 - 2 - 3;
+Log(i);
+");
+      Assert.AreEqual("0", scriptLogOutput[0]);
+      Assert.AreEqual("-4", scriptLogOutput[1]);
+    }
+
+    [TestMethod]
+    public void Perform_Subtraction_Arithmetic_Between_Variables()
+    {
+      scriptLogOutput.Clear();
+
+      var visitor = VisitScript(
+@"
+int i;
+i = 3;
+int x = 2;
+i = i - x;
+Log(i);
+");
+      Assert.AreEqual("1", scriptLogOutput[0]);
+    }
+
+    [TestMethod]
+    public void Has_Arithmetic_Operator_Precedence()
+    {
+      scriptLogOutput.Clear();
+
+      var visitor = VisitScript(
+@"
+int i;
+i = 3 + 2 * 2;
+Log(i);
+");
+      Assert.AreEqual("7", scriptLogOutput[0]);
+    }
+
+    [TestMethod]
+    public void Can_Subtract_Three_Numbers()
+    {
+      scriptLogOutput.Clear();
+
+      var visitor = VisitScript(
+@"
+int i;
+i = 3 - 2 - 1;
+Log(i);
+");
+      Assert.AreEqual("0", scriptLogOutput[0]);
+    }
+
+    [TestMethod]
+    public void Can_Generate_Random_Number_Precedence()
+    {
+      scriptLogOutput.Clear();
+
+      var visitor = VisitScript(
+@"
+int i;
+i = Random(10);
+Log(i);
+");
+      var number = int.Parse(scriptLogOutput[0]);
+      Assert.IsTrue(number >= 0 && number < 10);
+    }
+
+    [TestMethod]
+    public void Can_Generate_Random_Number_Min_Max()
+    {
+      scriptLogOutput.Clear();
+
+      var visitor = VisitScript(
+@"
+int i;
+i = Random(100, 150);
+Log(i);
+");
+      var number = int.Parse(scriptLogOutput[0]);
+      Assert.IsTrue(number >= 100 && number < 150);
+    }
+
+    [TestMethod]
+    public void Can_Concatenate_String()
+    {
+      scriptLogOutput.Clear();
+
+      var visitor = VisitScript(
+@"
+string s;
+s = ""Hello"" + "" World!"";
+Log(s);
+");
+      Assert.AreEqual("Hello World!", scriptLogOutput[0]);
+    }
+
+    [TestMethod]
+    public void Cannot_Assign_String_To_Int()
+    {
+      Assert.ThrowsException<SeleniumScriptVisitorException>(() => { var visitor = VisitScript(@"int i = ""Hello world!"";"); }, "Cannot assign Hello world! to variable i. Not a valid int.");
     }
 
     private SeleniumScriptInterpreter VisitScript(string script)

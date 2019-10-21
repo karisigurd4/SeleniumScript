@@ -1,10 +1,11 @@
 ﻿namespace SeleniumScript.Implementation
 {
+  using global::SeleniumScript.Implementation.DataModel;
   using Grammar;
   using Interfaces;
   using static Grammar.SeleniumScriptParser;
 
-  public partial class SeleniumScriptInterpreter : SeleniumScriptBaseVisitor<object>, ISeleniumScriptInterpreter
+  public partial class SeleniumScriptInterpreter : SeleniumScriptBaseVisitor<Symbol>, ISeleniumScriptInterpreter
   {
     private readonly ISeleniumScriptWebDriver webDriver;
     private readonly ISeleniumScriptLogger seleniumLogger;
@@ -19,7 +20,7 @@
 
     public event CallBackEventHandler OnCallback;
 
-    public void Visit(ExecutionUnitContext context)
+    public void Run(ExecutionUnitContext context)
     {
       base.Visit(context);
     }

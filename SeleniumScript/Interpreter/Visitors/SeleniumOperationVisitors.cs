@@ -4,86 +4,98 @@
   using global::SeleniumScript.Enums;
   using global::SeleniumScript.Exceptions;
   using global::SeleniumScript.Grammar;
+  using global::SeleniumScript.Implementation.DataModel;
+  using global::SeleniumScript.Interpreter.Enums;
+  using System;
   using static global::SeleniumScript.Grammar.SeleniumScriptParser;
 
-  public partial class SeleniumScriptInterpreter : SeleniumScriptBaseVisitor<object>
+  public partial class SeleniumScriptInterpreter : SeleniumScriptBaseVisitor<Symbol>
   {
-    public override object VisitOperationCallBack([NotNull] OperationCallBackContext context)
+    public override Symbol VisitOperationRandom([NotNull] OperationRandomContext context)
     {
-      var data = (string)context.parameterList().data(0).Accept(this);
+      var random = new Random();
+      Symbol first = null, second = null;
+
+      first = context.first.Accept(this);
+
+      if(context.second != null)
+      {
+        second = context.second.Accept(this);
+
+        return new Symbol(string.Empty, ReturnType.Int, random.Next(first.AsInt, second.AsInt));
+      }
+
+      return new Symbol(string.Empty, ReturnType.Int, random.Next(first.AsInt));
+    }
+
+    public override Symbol VisitOperationCallBack([NotNull] OperationCallBackContext context)
+    {
+      var data = context.parameterList().data(0).Accept(this).AsString;
 
       seleniumLogger.Log($"Executing callback {data}", SeleniumScriptLogLevel.InterpreterDetails);
+
       OnCallback(data);
       return null;
     }
 
-    public override object VisitOperationGetUrl([NotNull] OperationGetUrlContext context)
+    public override Symbol VisitOperationGetUrl([NotNull] OperationGetUrlContext context)
     {
       seleniumLogger.Log($"Calling selenium WebDriver GetUrl()", SeleniumScriptLogLevel.InterpreterDetails);
-      return webDriver.GetUrl();
+      return new Symbol(string.Empty, ReturnType.String, webDriver.GetUrl());
     }
 
-    public override object VisitOperationLog([NotNull] OperationLogContext context)
+    public override Symbol VisitOperationLog([NotNull] OperationLogContext context)
     {
-      var data = (string)context.parameterList().data(0).Accept(this);
+      var data = context.parameterList().data(0).Accept(this).AsString;
 
       seleniumLogger.Log($"Logging to Script log level: {data}", SeleniumScriptLogLevel.InterpreterDetails);
       seleniumLogger.Log(data, SeleniumScriptLogLevel.Script);
       return null;
     }
 
-    public override object VisitOperationGetElementText([NotNull] OperationGetElementTextContext context)
+    public override Symbol VisitOperationGetElementText([NotNull] OperationGetElementTextContext context)
     {
-      var xPath = (string)Visit(context.parameterList().data(0));
-      var elementDescription = (string)ResolveoptionalParameter(context.parameterList().data(), 1);
+      var xPath = context.parameterList().data(0).Accept(this).AsString;
+      var elementDescription = ResolveoptionalParameter(context.parameterList().data(), 1).AsString;
 
       seleniumLogger.Log($"Calling GetElementText on driver with xpath {xPath} and description {elementDescription}", SeleniumScriptLogLevel.InterpreterDetails);
-      return webDriver.GetElementText(xPath, elementDescription);
+      return new Symbol(string.Empty, ReturnType.String, webDriver.GetElementText(xPath, elementDescription));
     }
 
-    public override object VisitOperationSendkeys([NotNull] OperationSendkeysContext context)
+    public override Symbol VisitOperationSendkeys([NotNull] OperationSendkeysContext context)
     {
-      var xPath = (string)Visit(context.parameterList().data(0));
-      var data = (string)Visit(context.parameterList().data(1));
-      var elementDescription = (string)ResolveoptionalParameter(context.parameterList().data(), 2);
+      var xPath = context.parameterList().data(0).Accept(this).AsString;
+      var data = context.parameterList().data(1).Accept(this).AsString;
+      var elementDescription = ResolveoptionalParameter(context.parameterList().data(), 2).AsString;
 
       seleniumLogger.Log($"Calling sendKeys on driver with xpath {xPath} and data {data} and description {elementDescription}", SeleniumScriptLogLevel.InterpreterDetails);
       webDriver.SendKeys(xPath, data, elementDescription);
       return null;
     }
 
-    public override object VisitOperationClick([NotNull] OperationClickContext context)
+    public override Symbol VisitOperationClick([NotNull] OperationClickContext context)
     {
-      var xPath = (string)Visit(context.parameterList().data(0));
-      var elementDescription = (string)ResolveoptionalParameter(context.parameterList().data(), 1);
+      var xPath = context.parameterList().data(0).Accept(this).AsString;
+      var elementDescription = ResolveoptionalParameter(context.parameterList().data(), 1).AsString;
 
       seleniumLogger.Log($"Calling click on driver with xpath {xPath} and description {elementDescription}", SeleniumScriptLogLevel.InterpreterDetails);
       webDriver.Click(xPath, elementDescription);
       return null;
     }
 
-    public override object VisitOperationNavigateTo([NotNull] OperationNavigateToContext context)
+    public override Symbol VisitOperationNavigateTo([NotNull] OperationNavigateToContext context)
     {
-      var url = (string)Visit(context.parameterList().data(0));
+      var url = context.parameterList().data(0).Accept(this).AsString;
 
       seleniumLogger.Log($"Navigating driver to {url}", SeleniumScriptLogLevel.InterpreterDetails);
       webDriver.NavigateTo(url);
       return null;
     }
 
-    public override object VisitOperationWait([NotNull] OperationWaitContext context)
+    public override Symbol VisitOperationWait([NotNull] OperationWaitContext context)
     {
       seleniumLogger.Log($"Operation wait", SeleniumScriptLogLevel.InterpreterDetails);
-
-      int numberOfSeconds;
-      if (!int.TryParse((string)Visit(context.parameterList().data(0)), out numberOfSeconds))
-      {
-        throw new SeleniumScriptVisitorException($"Number could not be parsed");
-      }
-      else
-      {
-        webDriver.WaitForSeconds(numberOfSeconds);
-      }
+      webDriver.WaitForSeconds(context.parameterList().data(0).Accept(this).AsInt);
       return null;
     }
   }

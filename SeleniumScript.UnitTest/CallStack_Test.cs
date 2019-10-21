@@ -7,6 +7,7 @@
   using SeleniumScript.Implementation.DataModel;
   using SeleniumScript.Implementation.Enums;
   using SeleniumScript.Interfaces;
+  using SeleniumScript.Interpreter.Enums;
 
   [TestClass]
   public class CallStack_Test
@@ -18,7 +19,7 @@
     {
       var callStack = new CallStack(new StackFrameHandlerFactory(), seleniumScriptLogger.Object);
 
-      callStack.Current.AddFunction("name", new Function("name", "string"));
+      callStack.Current.AddFunction("name", new Function("name", ReturnType.String));
 
       var function = callStack.ResolveFunction("name");
 
@@ -31,11 +32,11 @@
     {
       var callStack = new CallStack(new StackFrameHandlerFactory(), seleniumScriptLogger.Object);
 
-      callStack.Current.AddVariable("global", "globalvalue");
+      callStack.Current.AddVariable("global", ReturnType.String, "globalvalue");
 
       callStack.Push(StackFrameScope.Local);
 
-      callStack.Current.AddVariable("name", "value");
+      callStack.Current.AddVariable("name", ReturnType.String, "value");
 
       var variable = callStack.ResolveVariable("name");
 
@@ -51,11 +52,11 @@
     {
       var callStack = new CallStack(new StackFrameHandlerFactory(), seleniumScriptLogger.Object);
 
-      callStack.Current.AddVariable("global", "globalvalue");
+      callStack.Current.AddVariable("global", ReturnType.String, "globalvalue");
 
       callStack.Push(StackFrameScope.Local);
 
-      callStack.Current.AddVariable("name", "value");
+      callStack.Current.AddVariable("name", ReturnType.String, "value");
 
       var variable = callStack.ResolveVariable("name");
 
@@ -73,25 +74,25 @@
     {
       var callStack = new CallStack(new StackFrameHandlerFactory(), seleniumScriptLogger.Object);
 
-      callStack.Current.AddVariable("global1", "globalvalue1");
-      callStack.Current.AddVariable("global2", "globalvalue2");
-      callStack.Current.AddVariable("FindThis", "Correct");
+      callStack.Current.AddVariable("global1", ReturnType.String, "globalvalue1");
+      callStack.Current.AddVariable("global2", ReturnType.String, "globalvalue2");
+      callStack.Current.AddVariable("FindThis", ReturnType.String, "Correct");
 
       callStack.Push(StackFrameScope.Method);
 
-      callStack.Current.AddVariable("name1", "value1");
-      callStack.Current.AddVariable("name2", "value2");
-      callStack.Current.AddVariable("FindThis", "Incorrect");
+      callStack.Current.AddVariable("name1", ReturnType.String, "value1");
+      callStack.Current.AddVariable("name2", ReturnType.String, "value2");
+      callStack.Current.AddVariable("FindThis", ReturnType.String, "Incorrect");
 
       callStack.Push(StackFrameScope.Method);
 
-      callStack.Current.AddVariable("name1", "value1");
-      callStack.Current.AddVariable("name2", "value2");
+      callStack.Current.AddVariable("name1", ReturnType.String, "value1");
+      callStack.Current.AddVariable("name2", ReturnType.String, "value2");
 
       callStack.Push(StackFrameScope.Local);
 
-      callStack.Current.AddVariable("name1", "value1");
-      callStack.Current.AddVariable("name2", "value2");
+      callStack.Current.AddVariable("name1", ReturnType.String, "value1");
+      callStack.Current.AddVariable("name2", ReturnType.String, "value2");
 
       var variable = callStack.ResolveVariable("FindThis");
 

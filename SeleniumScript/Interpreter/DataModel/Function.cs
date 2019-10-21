@@ -3,13 +3,14 @@
   using System.Collections.Generic;
   using static global::SeleniumScript.Grammar.SeleniumScriptParser;
   using Implementation.Enums;
+  using global::SeleniumScript.Interpreter.Enums;
 
   public class Function : Symbol
   {
-    public Dictionary<string, string> Parameters { get; set; }
-    public FunctionBodyContext Body { get; set; }
+    public Dictionary<string, ReturnType> Parameters { get; set; }
+    public FunctionBodyContext Body { get { return (FunctionBodyContext)Value; } set { Value = (FunctionBodyContext)value; } }
 
-    public Function(string name, string returnType) : base(name, returnType)
+    public Function(string name, ReturnType? returnType) : base(name, returnType ?? ReturnType.Unspecified)
     {
       this.SymbolType = SymbolType.Function;
     }

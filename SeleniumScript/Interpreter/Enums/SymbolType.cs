@@ -5,6 +5,7 @@
   public enum SymbolType
   {
     Variable,
-    Function
+    Function,
+    Literal
   }
 }

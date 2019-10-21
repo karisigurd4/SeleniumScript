@@ -5,6 +5,6 @@
   public interface ISeleniumScriptInterpreter
   {
     event CallBackEventHandler OnCallback;
-    void Visit(ExecutionUnitContext context);
+    void Run(ExecutionUnitContext context);
   }
 }

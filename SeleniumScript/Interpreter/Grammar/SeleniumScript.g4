@@ -62,6 +62,10 @@ grammar SeleniumScript;
 	 : GETURL parameterList
 	 ;
 
+ operationRandom
+	 : RANDOM LPAREN first=resolveIntLiteral (COMMA second=resolveIntLiteral)? RPAREN
+	;
+
  parameterList
 	: LPAREN (data COMMA?)* RPAREN
 	;
@@ -75,11 +79,16 @@ grammar SeleniumScript;
 	;
 
  forLoopInitializer
-	: ( variableDeclaration | variableAssignment )
+	: ( ( variableDeclaration | variableAssignment ) | SEMI )
 	;
 
  ifCondition
 	: IF LPAREN logicalExpression RPAREN statementBlock (ELSE ifCondition)* (ELSE statementBlock)?
+	;
+
+ expression
+	: booleanExpression
+	| unaryExpression
 	;
 
  logicalExpression
@@ -91,13 +100,8 @@ grammar SeleniumScript;
 	| OR
 	;
 
- expression
-	: booleanExpression
-	| unaryExpression
-	;
-
  booleanExpression
-	: data booleanOperator data
+	: left=data booleanOperator right=data
 	;
 
  booleanOperator
@@ -147,21 +151,46 @@ grammar SeleniumScript;
 	;
  
  variableAssignment
-	: IDENTIFIER ASSIGNMENT data
+	: IDENTIFIER ASSIGNMENT data SEMI
 	;
 
  data
+	: resolveSymbol
+	| arithmeticExpression
+	;
+ 
+ arithmeticExpression
+	: left=arithmeticExpression POW right=arithmeticExpression
+	| left=arithmeticExpression MUL right=arithmeticExpression
+	| left=arithmeticExpression DIV right=arithmeticExpression
+	| left=arithmeticExpression ADD right=arithmeticExpression
+	| left=arithmeticExpression SUB right=arithmeticExpression
+	| left=arithmeticExpression MOD right=arithmeticExpression
+	| value=resolveSymbol
+	;
+
+ arithmeticOperator
+	: ADD
+	| SUB
+	| MUL
+	| DIV
+	| POW
+	| MOD
+	;
+
+ resolveSymbol
 	: resolveReference
 	| resolveLiteral
 	| functionCall
 	| operationGetElementText
 	| operationGetUrl
+	| operationRandom
 	;
 
  resolveReference
 	: IDENTIFIER
 	;
-
+ 
  resolveLiteral
 	: resolveStringLiteral
 	| resolveIntLiteral
@@ -190,6 +219,7 @@ resolveStringLiteral
  WAIT: 'Wait';
  NAVIGATETO: 'NavigateTo';
  CALLBACK: 'Callback';
+ RANDOM: 'Random';
 
  GETELEMENTTEXT: 'GetElementText';
  GETURL: 'GetUrl';
@@ -219,6 +249,13 @@ resolveStringLiteral
  LT: '<';
  LGTE: '>=';
  LTE: '<=';
+
+ ADD: '+';
+ SUB: '-';
+ MUL: '*';
+ DIV: '/';
+ POW: '^';
+ MOD: '%';
 
  ASSIGNMENT: '=';
 

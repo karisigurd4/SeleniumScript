@@ -129,10 +129,14 @@
   <ItemGroup>
     <Compile Include="Contracts\LogEntry.cs" />
     <Compile Include="Exceptions\SeleniumScriptException.cs" />
+    <Compile Include="Interfaces\ISeleniumScriptPreProcessor.cs" />
     <Compile Include="Interpreter\DataModel\Function.cs" />
-    <Compile Include="Factories\StackFrameHandlerFactory.cs" />
+    <Compile Include="Interpreter\Enums\ReturnType.cs" />
+    <Compile Include="Interpreter\Factories\StackFrameHandlerFactory.cs" />
+    <Compile Include="Interpreter\DataModel\Literal.cs" />
+    <Compile Include="Interpreter\Visitors\LogicalExpressionVisitors.cs" />
     <Compile Include="Interpreter\Visitors\ControlFlowVisitors.cs" />
-    <Compile Include="Interpreter\Visitors\ExpressionVisitors.cs" />
+    <Compile Include="Interpreter\Visitors\ArithmeticExpressionVisitors.cs" />
     <Compile Include="Interpreter\Visitors\FunctionVisitors.cs" />
     <Compile Include="Interpreter\Visitors\LiteralVisitors.cs" />
     <Compile Include="Interpreter\Visitors\SeleniumOperationVisitors.cs" />
@@ -141,7 +145,6 @@
     <Compile Include="Interpreter\Enums\StackFrameScope.cs" />
     <Compile Include="Interpreter\Enums\SymbolType.cs" />
     <Compile Include="Interpreter\CallStack\CallStack.cs" />
-    <Compile Include="Interpreter\Symbols\SymbolScope.cs" />
     <Compile Include="Interpreter\DataModel\Variable.cs" />
     <Compile Include="Enums\SeleniumScriptLogLevel.cs" />
     <Compile Include="Exceptions\SeleniumScriptSyntaxException.cs" />
@@ -152,10 +155,9 @@
     <Compile Include="Implementation\SeleniumScriptLogger.cs" />
     <Compile Include="Implementation\SeleniumScript.cs" />
     <Compile Include="Interpreter\SeleniumScriptInterpreter.cs" />
-    <Compile Include="Grammar\SeleniumScript.g4.lexer.cs" />
-    <Compile Include="Grammar\SeleniumScript.g4.parser.cs" />
+    <Compile Include="Interpreter\Grammar\SeleniumScript.g4.lexer.cs" />
+    <Compile Include="Interpreter\Grammar\SeleniumScript.g4.parser.cs" />
     <Compile Include="Implementation\SeleniumScriptWebDriver.cs" />
-    <Compile Include="Interpreter\Symbols\SymbolMap.cs" />
     <Compile Include="Interfaces\ICallStack.cs" />
     <Compile Include="Interfaces\ISeleniumScriptLogger.cs" />
     <Compile Include="Interfaces\ISeleniumScript.cs" />
@@ -167,15 +169,18 @@
     <Compile Include="Interfaces\ISymbolScope.cs" />
     <Compile Include="Interpreter\Visitors\VisitorUtils.cs" />
     <Compile Include="Interpreter\Visitors\VariableVisitors.cs" />
+    <Compile Include="PreProcessor\SeleniumScriptPreprocessor.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
-    <Antlr4 Include="Grammar\SeleniumScript.g4">
+    <Antlr4 Include="Interpreter\Grammar\SeleniumScript.g4">
       <Generator>MSBuild:Compile</Generator>
       <CustomToolNamespace>SeleniumScript.Grammar</CustomToolNamespace>
     </Antlr4>
   </ItemGroup>
-  <ItemGroup />
+  <ItemGroup>
+    <Folder Include="PreProcessor\Grammar\" />
+  </ItemGroup>
   <ItemGroup>
     <None Include="app.config" />
     <None Include="packages.config" />

@@ -29,7 +29,7 @@
       return stackFrames.Count > 0 ? Current.ResolveFunction(name) : globalStackFrame.ResolveFunction(name);
     }
 
-    public string ResolveVariable(string name)
+    public Variable ResolveVariable(string name)
     {
       seleniumScriptLogger.Log($"Trying to resolve variable {name}");
       return stackFrames.Count > 0 ? Current.ResolveVariable(name) ?? globalStackFrame.ResolveVariable(name) : globalStackFrame.ResolveVariable(name);

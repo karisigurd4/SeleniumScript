@@ -49,7 +49,7 @@
       
       try
       {
-        seleniumScriptVisitor.Visit(seleniumScriptParser.executionUnit());
+        seleniumScriptVisitor.Run(seleniumScriptParser.executionUnit());
       }
       catch (Exception e)
       {

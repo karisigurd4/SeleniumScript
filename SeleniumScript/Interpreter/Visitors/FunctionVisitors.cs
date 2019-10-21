@@ -6,19 +6,20 @@
   using global::SeleniumScript.Grammar;
   using global::SeleniumScript.Implementation.DataModel;
   using global::SeleniumScript.Implementation.Enums;
+  using global::SeleniumScript.Interpreter.Enums;
   using System.Collections.Generic;
   using System.Linq;
   using static global::SeleniumScript.Grammar.SeleniumScriptParser;
  
-  public partial class SeleniumScriptInterpreter : SeleniumScriptBaseVisitor<object>
+  public partial class SeleniumScriptInterpreter : SeleniumScriptBaseVisitor<Symbol>
   {
-    public override object VisitFunctionArguments([NotNull] FunctionArgumentsContext context)
+    public override Symbol VisitFunctionArguments([NotNull] FunctionArgumentsContext context)
     {
       seleniumLogger.Log($"Resolving function arguments");
-      return context.data().Select(x => (string)x.Accept(this)).ToArray();
+      return new Symbol(string.Empty, ReturnType.Array, context.data().Select(x => x.Accept(this).AsString).ToArray());
     }
 
-    public override object VisitFunctionCall([NotNull] FunctionCallContext context)
+    public override Symbol VisitFunctionCall([NotNull] FunctionCallContext context)
     {
       var identifier = context.IDENTIFIER().GetText();
       var functionArguments = context.functionArguments();
@@ -26,7 +27,7 @@
       var functionBody = functionDefinition.Body.statementBlock();
 
       seleniumLogger.Log($"Calling function {identifier}", SeleniumScriptLogLevel.InterpreterDetails);
-      var argumentList = new Dictionary<string, string>();
+      Variable[] argumentVariables = null;
 
       if (functionDefinition.Parameters.Count > 0 && (context.functionArguments() == null || context.functionArguments().data().Length != functionDefinition.Parameters.Count))
       {
@@ -37,25 +38,26 @@
       }
       else if (functionDefinition.Parameters.Count > 0)
       {
-        argumentList = ((string[])functionArguments.Accept(this))
-          .Select((x, i) => new KeyValuePair<string, string>(functionDefinition.Parameters.ElementAt(i).Key, x))
-          .ToDictionary(x => x.Key, x => x.Value);
+        argumentVariables = functionArguments.Accept(this).AsArray.Select((x, i) => new Variable(functionDefinition.Parameters.ElementAt(i).Key, functionDefinition.Parameters.ElementAt(i).Value, x)).ToArray();
       }
 
       callStack.Push(StackFrameScope.Method);
 
-      foreach (var kv in argumentList)
+      if(argumentVariables != null)
       {
-        callStack.Current.AddVariable(kv.Key, kv.Value);
+        foreach (var variable in argumentVariables)
+        {
+          callStack.Current.AddVariable(variable.Name, variable.ReturnType, variable.AsString);
+        }
       }
 
       foreach (var statement in functionBody.statement())
       {
         if (statement.functionReturn() != null)
         {
-          var data = statement.functionReturn().data().Accept(this);
+          var data = statement.functionReturn().data().Accept(this).Value;
           callStack.Pop();
-          return data;
+          return new Symbol(string.Empty, functionDefinition.ReturnType, data);
         }
 
         statement.Accept(this);
@@ -65,16 +67,16 @@
       return null;
     }
 
-    public override object VisitFunctionDeclaration([NotNull] FunctionDeclarationContext context)
+    public override Symbol VisitFunctionDeclaration([NotNull] FunctionDeclarationContext context)
     {
       var identifier = context.IDENTIFIER().GetText();
-      var returnType = context.variableType() != null ? context.variableType().GetText() : null;
+      var returnType = context?.variableType()?.Accept(this).ReturnType;
       seleniumLogger.Log($"Declaring function {identifier}", SeleniumScriptLogLevel.InterpreterDetails);
 
-      var parameters = new Dictionary<string, string>();
+      var parameters = new Dictionary<string, ReturnType>();
       for (int i = 0; i < context.functionParameters().variableType().Length; i++)
       {
-        parameters.Add(context.functionParameters().IDENTIFIER(i).GetText(), context.functionParameters().variableType(i).GetText());
+        parameters.Add(context.functionParameters().IDENTIFIER(i).GetText(), context.functionParameters().variableType(i).Accept(this).ReturnType);
       }
 
       var functionDefinition = new Function(identifier, returnType)

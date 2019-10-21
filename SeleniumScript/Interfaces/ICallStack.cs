@@ -7,7 +7,7 @@
   {
     IStackFrameHandler Current { get; }
     Function ResolveFunction(string name);
-    string ResolveVariable(string name);
+    Variable ResolveVariable(string name);
     void SetVariable(string name, string value);
     void Pop();
     void Push(StackFrameScope stackFrameScopeType);
