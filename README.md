@@ -22,14 +22,15 @@ using (var seleniumScript = new SeleniumScript(driver))
 ## Language
 
 SeleniumScript provides a number of built-in functions,
-* **SendKeys**(*xPath*, *data*, (optional) *description*);
-* **Click**(*xPath*, (optional) *description*);
-* **GetElementText**(*xPath*, (optional) *description*)
-* **GetUrl**()
-* **NavigateTo**(*url*);
-* **Wait**(*numberOfSeconds*);
-* **Log**(*message*)
-* **Callback**(*callbackName*);
+* **SendKeys**(*xPath*, *data*, (optional) *description*); - *Sends virtual key inputs to a web element via Selenium*
+* **Click**(*xPath*, (optional) *description*); - *Performs a virtual click on a web element via selenium*
+* **GetElementText**(*xPath*, (optional) *description*) - *Returns inner text contained within a web element via Slenium*
+* **GetUrl**() - *Gets the current URL the webdriver is on*
+* **NavigateTo**(*url*); - *Navigates the driver to a new URL*
+* **Wait**(*numberOfSeconds*); - *Waits a specified number of seconds*
+* **Log**(*message*) - *Writes to the **Script** log output*
+* **Random**(*min/max*, (optional) *max*); - *Generates a random number between min and max. If only one parameter is specified min is trated as max.*
+* **Callback**(*callbackName*); - *Triggers a callback to any of the registered callback handlers.*
 
 SeleniumScript automatically creates log output on the SeleniumInfo log level for each of these operations. When the optional description parameters are used it serves to provide more comprehensive and usable diagnostic and monitoring information. 
 
@@ -50,7 +51,7 @@ Wait(numberOfSeconds);
 
 ### Functions
 
-Functions can be defined to execute a sequence of instructions with an optional return type and optional parameter list declarations. 
+Functions can be defined to execute a sequence of instructions with an optional return type and optional parameter list declarations. Currently functions need to be specified at the top of the file for the interpreter to analyze/register them and recognize later uses of them.
 
 **Simple function definition**
 ```C#
@@ -98,11 +99,22 @@ for (int i = 0; i < 10; i++)
 }
 ```   
 
-### Writing scripts
+## Arithmetic ##
 
-The execution entry point for a script is the run() function definition. 
+Numerical arithmetic follows operator precedence
 
-Scripts can include other script files for separation of common helper and utility functions. 
+```C#
+int i;
+i = 3 + 2 * 2;
+```   
+
+String arithmetic
+
+```C#
+string s;
+s = ""Hello"" + "" World!"";
+```   
+
 
 ### Type handling
 
