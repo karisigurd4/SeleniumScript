@@ -1,6 +1,6 @@
 # SeleniumScript
 
-A scripting language abstraction built on top of Selenium WebDriver. Intended to make the process of writing frontend tests quicker and easier to maintain. Any flavour of IWebDriver can be plugged into the component. 
+A scripting language that provides an interface abstraction to  Selenium WebDriver. Intended to make the process of writing frontend tests quicker and easier to maintain. Any flavour of IWebDriver can be plugged into the component. 
 
 The language has similar syntax to C for what it supports. The code is parsed and run by an interpreter and does not require compilation. 
 
