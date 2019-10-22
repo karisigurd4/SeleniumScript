@@ -8,6 +8,7 @@ Still under development, planned additions include
 * VS Code integration 
 * PreParser component (type checking, include scripts, etc...) 
 * Test runner application 
+* More Selenium specific interface abstractions (Actions, more operations etc...)
 
 ## Usage (C# Component initialization)
 
