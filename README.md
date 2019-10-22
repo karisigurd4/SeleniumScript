@@ -4,6 +4,11 @@ A scripting language and interpreter that provides a runtime and an interface fo
 
 The language is defined with ANTLR and the interpreter is implemented in C#.
 
+Still under development, planned additions include
+* VS Code integration 
+* PreParser component (type checking, include scripts, etc...) 
+* Test runner application 
+
 ## Usage (C# Component initialization)
 
 The interpreter component exposes a run method which takes in a script as a string. The component implements IDisposable which releases and quits the executing selenium runtime when invoked. 
