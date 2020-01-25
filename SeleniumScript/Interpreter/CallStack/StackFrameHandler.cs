@@ -97,8 +97,7 @@
 
       if (scopeType == StackFrameScope.Method || scopeType == StackFrameScope.Global)
       {
-        seleniumScriptLogger.Log($"Function {name} could not be resolved", SeleniumScriptLogLevel.InterpreterDetails);
-        throw new SeleniumScriptVisitorException($"Function {name} could not be resolved");
+        return null;
       }
 
       seleniumScriptLogger.Log($"Function {name} not found in current scope, trying parent", SeleniumScriptLogLevel.InterpreterDetails);
@@ -115,8 +114,7 @@
 
       if (scopeType == StackFrameScope.Method || scopeType == StackFrameScope.Global)
       {
-        seleniumScriptLogger.Log($"Varriable {name} could not be resolved", SeleniumScriptLogLevel.InterpreterDetails);
-        throw new SeleniumScriptVisitorException($"Varriable {name} could not be resolved");
+        return null;
       }
 
       seleniumScriptLogger.Log($"Variable {name} not found in current scope, trying parent", SeleniumScriptLogLevel.InterpreterDetails);
