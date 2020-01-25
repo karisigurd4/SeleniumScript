@@ -53,7 +53,7 @@
       }
       catch (Exception e)
       {
-        seleniumScriptLogger.Log(e.Message, exceptionLogLevels[e.GetType().Name]);
+        seleniumScriptLogger.Log(e.Message, exceptionLogLevels.ContainsKey(e.getType().Name) ? exceptionLogLevels[e.GetType().Name] : SeleniumScriptLogLevel.Undefined);
         Dispose();
         throw e;
       }
