@@ -78,6 +78,7 @@
       {
         try
         {
+          Thread.Sleep(500);
           action();
           return;
         }
@@ -98,6 +99,7 @@
       {
         try
         {
+          Thread.Sleep(500);
           return action();
         }
         catch (Exception)
