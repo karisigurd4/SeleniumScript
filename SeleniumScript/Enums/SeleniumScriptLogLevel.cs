@@ -9,6 +9,7 @@
     VisitorError,
     SeleniumScriptError,
     WebDriverError,
-    RuntimeError
+    RuntimeError,
+    Undefined
   }
 }
