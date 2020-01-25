@@ -26,13 +26,25 @@
     public Function ResolveFunction(string name)
     {
       seleniumScriptLogger.Log($"Trying to resolve function {name}");
-      return stackFrames.Count > 0 ? Current.ResolveFunction(name) : globalStackFrame.ResolveFunction(name);
+      var function = stackFrames.Count > 0 ? Current.ResolveFunction(name) : globalStackFrame.ResolveFunction(name);
+      if (function == null) 
+      {
+        seleniumScriptLogger.Log($"Function {name} could not be resolved", SeleniumScriptLogLevel.InterpreterDetails);
+        throw new SeleniumScriptVisitorException($"Function {name} could not be resolved");
+      }
+      return function;
     }
 
     public Variable ResolveVariable(string name)
     {
       seleniumScriptLogger.Log($"Trying to resolve variable {name}");
-      return stackFrames.Count > 0 ? Current.ResolveVariable(name) ?? globalStackFrame.ResolveVariable(name) : globalStackFrame.ResolveVariable(name);
+      var variable = stackFrames.Count > 0 ? Current.ResolveVariable(name) ?? globalStackFrame.ResolveVariable(name) : globalStackFrame.ResolveVariable(name);
+      if (variable == null) 
+      {
+        seleniumScriptLogger.Log($"Varriable {name} could not be resolved", SeleniumScriptLogLevel.InterpreterDetails);
+        throw new SeleniumScriptVisitorException($"Varriable {name} could not be resolved");
+      }
+      return variable;
     }
 
     public void SetVariable(string name, string value)
